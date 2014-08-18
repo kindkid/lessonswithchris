@@ -1,0 +1,12 @@
+# Add all your changes to get ready to commit them.
+git add -A
+
+# Commit all the changes you got ready
+git commit -m "Description of changes goes here"
+
+# Send all your changes to github
+git push
+
+# If git push didn't work, you may need to first...
+ssh-add
+
