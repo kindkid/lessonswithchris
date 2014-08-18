@@ -7,6 +7,6 @@ def mult(x,y):
   	i += 1
   return answer
 
-print mult(3,3000000)
+print mult(3,3)
 
   	
