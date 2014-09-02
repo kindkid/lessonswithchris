@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <script language="javascript">
+
+      // ========================================================
+      // Put your code here...
+      // ========================================================
+      function add_complex(a,b) {
+        //TODO
+      }
+
+      function sub_complex(a,b) {
+        //TODO
+      }
+
+      function mult_complex(a,b) {
+        //TODO
+      }
+
+      function sqr_complex(a) {
+        //TODO
+      }
+      // ========================================================
+
+      function check(code, expected) {
+        results = document.getElementById("results");
+        var div = document.createElement("div");
+        var actual = "dunno";
+        try {
+          actual = window.eval(code);
+        } catch(e) {
+          actual = "Error: " + e.message;
+        }
+        var passed = (actual && expected && actual.length && expected.length && actual.length == expected.length && actual.every(function(v,i){return v == expected[i]}));
+        div.className = passed ? "passing-test" : "failing-test";
+        div.innerHTML = "<span class=\"code\">" +
+                        code +
+                        "</span><span class=\"expected\">" +
+                        JSON.stringify(expected) +
+                        "</span><span class=\"actual\">" +
+                        JSON.stringify(actual) +
+                        "</span>";
+        results.appendChild(div)
+      }
+
+      function doit() {
+        check("add_complex([1,1], [2,2])", [3,3]);
+        check("add_complex([1,4], [2,5])", [3,9]);
+        check("sub_complex([0,82], [42,42])", [-42,40]);
+        check("sub_complex([9,9], [0,13])", [9,-4]);
+        check("mult_complex([3,5], [6,7])", [-17,51]);
+        check("sqr_complex([2,3])", [-5,12]);
+      }
+    </script>
+    <style>
+      #results .header {
+        font-weight: bold;
+        background: #aaa;
+      }
+      #results .passing-test {
+        background: #8c8;
+      }
+      #results .failing-test {
+        background: #c88;
+      }
+      #results .code {
+        display: inline-block;
+        width: 59%;
+      }
+      #results .actual, .expected {
+        display: inline-block;
+        width: 19%;
+      }
+      #results .passing-test .actual {
+        display:none;
+      }
+      #results .failing-test .actual {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body onload="doit();">
+    <div id="results">
+      <div class="header">
+        <span class="code">Code</span>
+        <span class="expected">Expected value</span>
+        <span class="actual">Actual value</span>
+      </div>
+    </div>
+  </body>
+</html>
