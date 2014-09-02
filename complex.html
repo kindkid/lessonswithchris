@@ -6,19 +6,18 @@
       // Put your code here...
       // ========================================================
       function add_complex(a,b) {
-        //TODO
+        return [(a[0] + b[0]) , (a[1] + b[1])]
       }
 
       function sub_complex(a,b) {
-        //TODO
+        return [(a[0] - b[0]) , (a[1] - b[1])]
       }
-
       function mult_complex(a,b) {
-        //TODO
+        return [(a[0] * b[0] - a[1] * b[1]) , (a[0] * b[1] + b[0] * a[1])]
       }
 
       function sqr_complex(a) {
-        //TODO
+        return mult_complex(a,a)
       }
       // ========================================================
 
