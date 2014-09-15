@@ -34,7 +34,7 @@
         } catch(e) {
           actual = "Error: " + e.message;
         }
-        var passed = (actual && expected && actual.length && expected.length && actual.length == expected.length && actual.every(function(v,i){return v == expected[i]}));
+        var passed = actual == expected || (actual && expected && actual.length && expected.length && actual.length == expected.length && actual.every(function(v,i){return v == expected[i]}));
         div.className = passed ? "passing-test" : "failing-test";
         div.innerHTML = "<span class=\"code\">" +
                         code +
