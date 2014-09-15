@@ -1,3 +1,5 @@
+import math
+
 def add_complex(a,b):
 	return [(a[0] + b[0]), (a[1] + b[1])]
 
@@ -13,21 +15,18 @@ def sub_complex(a,b):
 def sqr_complex(a):
     return mult_complex(a,a)
 
+def dist(a,b):
+    return math.sqrt((b[1] - a[1]) * (b[1] - a[1])  + (b[0] - a[0]) * (b[0] - a[0]))
+
 #returns how many iterations until transgretion
 # or negative value if reached max iterations 
-
 
 def mand(C, max_distance, max_iterations):
     pass
 
-
 # Z = C
 # Z = add_complex(sqr_complex(2), C)
 
-import math
-
-def dist(a,b):
-    return math.sqrt((b[1] - a[1]) * (b[1] - a[1])  + (b[0] - a[0]) * (b[0] - a[0]))
 
 if (add_complex([1,1], [2,2]) != [3,3]):
 	print "add_complex Fail"
