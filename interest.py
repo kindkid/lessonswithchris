@@ -9,4 +9,4 @@ def accrued(p,r,n,c,t):
 	return (p * (1 + (r/n)) ** (n * t)) + (c * ((1 + (r/n)) ** (n * t) - 1) * (n/r))
 
 
-print accrued(6.25, 0.07, 12, 1000, (65 - 22))
+print accrued(6.5, 0.07, 12, 1250, (65 - 28))

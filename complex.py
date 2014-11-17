@@ -3,8 +3,16 @@ import math
 def add_complex(a,b):
 	return [(a[0] + b[0]), (a[1] + b[1])]
 
+def div_complex(a,b):
+    pass
 
 #x and y are complex numbers (2 element arrays)
+
+def mand(x,y):
+	pass
+
+
+
 def mult_complex(a,b):
 	return [(a[0] * b[0] - a[1] * b[1]), (a[0] * b[1] + b[0] * a[1])]
 
