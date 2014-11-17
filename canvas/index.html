@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <style>
+      #blah {
+       border: 1px solid black;
+      }
+    </style>
+    <script>
+      var palette = ["#2b1665", "#423075", "#7c7395", "#FFFFFF"];
+      // Programatically build the palette array so that it contains these 256 colors: ["#000000", ..., "#0000FF"];
+      var doit = function() {
+        var c = document.getElementById("blah");
+        var ctx = c.getContext("2d");
+        var pixel = function(x,y,color) {
+          ctx.fillStyle = color;
+          ctx.fillRect(x*6, y*6, 6, 6);
+        }
+
+        for (x=0; x < 100; x++) {
+          for (y=0; y < 100; y++) {
+            pixel(x,y,palette[(x+y) % palette.length]);
+          }
+        }
+      }
+    </script>
+  </head>
+  <body onload="doit()">
+    <canvas id="blah" width="600" height="600"></canvas>
+  </body>
+</html>
