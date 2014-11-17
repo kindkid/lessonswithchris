@@ -6,8 +6,19 @@
       }
     </style>
     <script>
-      var palette = ["#2b1665", "#423075", "#7c7395", "#FFFFFF"];
-      // Programatically build the palette array so that it contains these 256 colors: ["#000000", ..., "#0000FF"];
+      // n is an integer between 0 and 255
+      var makeColorComponent = function(n) {
+        c= n.toString(16)
+        if (c.length < 2)
+          c = "0" + c
+        return c
+      }
+
+      //r,g,b are integers between 0 and 255
+      var makeColor = function(r,g,b) {
+        return "#" + makeColorComponent(r) + makeColorComponent(g) + makeColorComponent(b)       
+      }
+
       var doit = function() {
         var c = document.getElementById("blah");
         var ctx = c.getContext("2d");
@@ -18,7 +29,7 @@
 
         for (x=0; x < 100; x++) {
           for (y=0; y < 100; y++) {
-            pixel(x,y,palette[(x+y) % palette.length]);
+            pixel(x,y,makeColor(x,x+y %256,y));
           }
         }
       }
