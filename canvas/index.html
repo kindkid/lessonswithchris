@@ -20,7 +20,9 @@
           r = "0" + r
         return r
       }
-
+      var cycleMap = function (x,shift,width) {
+        return (Math.sin((x + (shift)) * width/(Math.PI * 2)) + 1)/2
+      }
       //r,g,b are floats/doubles between 0 and 1
       var makeColor = function(r,g,b) {
         return "#" + makeColorComponent(r) + makeColorComponent(g) + makeColorComponent(b)       
@@ -53,8 +55,10 @@
             for (i = 0; i<100; i++) {
               z = addComplex(multComplex(z,z),p)
               if (distance(z,p) >= TOO_FAR) {
-                grey = i/100.0
-                pixel (c,r,makeColor(grey,grey,grey))
+                red = cycleMap(i,Math.PI/2,100)
+                green = cycleMap(i,Math.PI/2 + 0.3333333 * 2 * Math.PI ,100)
+                blue = cycleMap (i,Math.PI/2 - 0.3333333 * 2 * Math.PI ,100)
+                pixel (c,r,makeColor(red,green,blue))
               }
             }
           }
