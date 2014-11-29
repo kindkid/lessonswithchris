@@ -55,9 +55,9 @@
             for (i = 0; i<100; i++) {
               z = addComplex(multComplex(z,z),p)
               if (distance(z,p) >= TOO_FAR) {
-                red = cycleMap(i,Math.PI/2,100)
-                green = cycleMap(i,Math.PI/2 + 0.3333333 * 2 * Math.PI ,100)
-                blue = cycleMap (i,Math.PI/2 - 0.3333333 * 2 * Math.PI ,100)
+                red = cycleMap(i,Math.PI/2,0,100)
+                green = cycleMap(i,Math.PI/2 + .3333333 * 2 * Math.PI ,100)
+                blue = cycleMap (i,Math.PI/2 - .3333333 * 2 * Math.PI ,100)
                 pixel (c,r,makeColor(red,green,blue))
               }
             }
