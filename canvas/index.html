@@ -6,11 +6,14 @@
       }
     </style>
     <script>
-      PIXELS = 600
-      SCALE = 1
-      TOO_FAR = 100000000
-      GLOBAL_SHIFT = .546
-      ITERATIONS = 100
+      X_MIN = -2
+      X_MAX = 1
+      Y_MIN = -1.5
+      Y_MAX = 1.5
+      TOO_FAR = 10
+      GLOBAL_SHIFT = 0.1
+      ITERATIONS = 80
+      ANIMATION_SPEED = 1
       //take a double between 0 and 1 and returns integer between 0 and 255
       var projection = function(d) {
         return  Math.round(255* d)
@@ -39,26 +42,44 @@
         return -transform(y,pixels,-minplot,-maxplot);
       }
       var doit = function() {
-        var tmp, zx, zy, x, y, sqrDistance, p;
+        var tmp, zx, zy, x, y, sqrDistance, p, i;
         var r = document.getElementById("blah");
+        var pixelRows = r.getAttribute("height");
+        var pixelCols = r.getAttribute("width");
+        var pixelCount = pixelRows * pixelCols
         var ctx = r.getContext("2d");
-        var drawPixel = function(x,y) {
-          ctx.fillRect(x*SCALE, y*SCALE, SCALE, SCALE);
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(0,0,pixelRows,pixelCols);
+        var canvasData = ctx.getImageData(0, 0, pixelCols, pixelRows);
+        var binaryData = canvasData.data;
+        var red = []
+        var green = []
+        var blue = []
+        var pixelColors = []
+        for (p=0; p < pixelCount; p++) {
+          pixelColors[p] = -1;
         }
-        var colsByColor = [];
-        var rowsByColor = [];
+        for (i=0; i < ITERATIONS; i++) {
+          red[i]   = projection(cycleMap(i,GLOBAL_SHIFT,ITERATIONS));
+          green[i] = projection(cycleMap(i,GLOBAL_SHIFT + 0.666666,ITERATIONS));
+          blue[i]  = projection(cycleMap(i,GLOBAL_SHIFT + 0.333333,ITERATIONS));
+        }
+        var drawPixel = function(x,y,i) {
+          var offset = (y+x*pixelCols) << 2;
+          pixelColors[offset]  = i;
+          binaryData[offset]   = red[i];
+          binaryData[offset+1] = green[i];
+          binaryData[offset+2] = blue[i];
+          binaryData[offset+3] = 0xFF
+        }
         var yTransforms = [];
-
-        for (i=0; i<ITERATIONS; i++) {
-          colsByColor[i] = [];
-          rowsByColor[i] = [];
+        for (r=0; r < pixelRows; r++) {
+          yTransforms[r] = yTransform(r, pixelRows, Y_MIN, Y_MAX);
         }
-        for (c=0; c < PIXELS/SCALE; c++) {
-          x = xTransform(c, PIXELS/SCALE, -2, 1)
-          for (r=0; r < PIXELS/SCALE; r++) {
-            if (c == 0) {
-              yTransforms[r] = yTransform(r, PIXELS/SCALE, -1.5, 1.5);
-            }
+
+        for (c=0; c < pixelCols; c++) {
+          x = xTransform(c, pixelCols, X_MIN, X_MAX)
+          for (r=0; r < pixelRows; r++) {
             y = yTransforms[r];
             zx = x
             zy = y
@@ -77,36 +98,33 @@
               sqrDistance = tmp*tmp
               tmp = x-zy
               sqrDistance = sqrDistance + tmp*tmp;
-              //sqrDistance = ((y-zy) * (y-zy) + (x-zx) * (x-zx));
-
+              //sqrDistance = ((y-zy) * (y-zy) + (x-zx) * (x-zx))
               if (sqrDistance >= TOO_FAR) {
-                colsByColor[i].push(c);
-                rowsByColor[i].push(r);
+                drawPixel(r,c,i);
               }
             }
           }
         }
-        for (i=0; i<ITERATIONS; i++) {
-          if (i in colsByColor) {
-            var red = cycleMap(i,GLOBAL_SHIFT,ITERATIONS)
-            var green = cycleMap(i,GLOBAL_SHIFT + 0.333333,ITERATIONS)
-            var blue = cycleMap (i,GLOBAL_SHIFT + 0.666666,ITERATIONS)
-            var color = makeColor(red, green, blue);
-            var cols = colsByColor[i];
-            var rows = rowsByColor[i];
-            var len = cols.length;
-            for (var j=0; j < len; j++) {
-              var c = cols[j];
-              var r = rows[j];
-              ctx.fillStyle = color;
-              ctx.fillRect(c*SCALE, r*SCALE, SCALE, SCALE);
-            }
+        ctx.putImageData(canvasData, 0, 0);
+        var anim = function() {
+          requestAnimationFrame(anim);
+          for (p=0; p < pixelCount; p++) {
+            offset = p << 2;
+            i = pixelColors[offset];
+            if (i < 0) continue;
+            i = (i + ANIMATION_SPEED) % ITERATIONS
+            binaryData[offset] = red[i];
+            binaryData[offset+1] = green[i];
+            binaryData[offset+2] = blue[i];
+            pixelColors[offset] = i;
           }
+          ctx.putImageData(canvasData, 0, 0);
         }
+        anim();
       }
     </script>
   </head>
   <body onload="doit()">
-    <canvas id="blah" width="600" height="600"></canvas>
+    <canvas id="blah" width="50" height="50"></canvas>
   </body>
 </html>
