@@ -8,7 +8,7 @@
     <script>
       PIXELS = 600
       SCALE = 1
-      TOO_FAR = 100000000000000000000000000000000000000000000000
+      TOO_FAR = 100000000
       GLOBAL_SHIFT = .546
       ITERATIONS = 100
       //take a double between 0 and 1 and returns integer between 0 and 255
@@ -38,39 +38,68 @@
       var yTransform = function(y, pixels, minplot, maxplot) {
         return -transform(y,pixels,-minplot,-maxplot);
       }
-      var sqrComplex = function(a) {
-        return [(a[0] * a[0] - a[1] * a[1]), (a[0] * a[1] * 2)]
-      }
-      var addComplex = function(a,b) {
-        return [(a[0] + b[0]), (a[1] + b[1])]
-      }
-      var distance = function(a,b) {
-        startTime = new Date().getTime();
-        var xdif = b[0] - a[0]
-        var ydif = b[1] - a[1]
-        return Math.sqrt(ydif * ydif  + xdif * xdif)
-      }
       var doit = function() {
+        var tmp, zx, zy, x, y, sqrDistance, p;
         var r = document.getElementById("blah");
         var ctx = r.getContext("2d");
-        var pixel = function(x,y,color) {
-          ctx.fillStyle = color;
+        var drawPixel = function(x,y) {
           ctx.fillRect(x*SCALE, y*SCALE, SCALE, SCALE);
         }
+        var colsByColor = [];
+        var rowsByColor = [];
+        var yTransforms = [];
+
+        for (i=0; i<ITERATIONS; i++) {
+          colsByColor[i] = [];
+          rowsByColor[i] = [];
+        }
         for (c=0; c < PIXELS/SCALE; c++) {
+          x = xTransform(c, PIXELS/SCALE, -2, 1)
           for (r=0; r < PIXELS/SCALE; r++) {
-            x = xTransform(c, PIXELS/SCALE, -2, 1)
-            y = yTransform(r, PIXELS/SCALE, -1.5, 1.5)
-            p = [x,y]
-            z = p
+            if (c == 0) {
+              yTransforms[r] = yTransform(r, PIXELS/SCALE, -1.5, 1.5);
+            }
+            y = yTransforms[r];
+            zx = x
+            zy = y
             for (i = 0; i<ITERATIONS; i++) {
-              z = addComplex(sqrComplex(z),p)
-              if (distance(z,p) >= TOO_FAR) {
-                red = cycleMap(i,GLOBAL_SHIFT,ITERATIONS)
-                green = cycleMap(i,GLOBAL_SHIFT + 0.333333,ITERATIONS)
-                blue = cycleMap (i,GLOBAL_SHIFT + 0.666666,ITERATIONS)
-                pixel (c,r,makeColor(red,green,blue))
+              // z = z*z
+              tmp = zx*zx - zy*zy
+              zy = 2*zx*zy
+              zx = tmp
+
+              // z = z + p
+              zx = zx + x
+              zy = zy + y
+
+              //distance squared
+              tmp = y-zy
+              sqrDistance = tmp*tmp
+              tmp = x-zy
+              sqrDistance = sqrDistance + tmp*tmp;
+              //sqrDistance = ((y-zy) * (y-zy) + (x-zx) * (x-zx));
+
+              if (sqrDistance >= TOO_FAR) {
+                colsByColor[i].push(c);
+                rowsByColor[i].push(r);
               }
+            }
+          }
+        }
+        for (i=0; i<ITERATIONS; i++) {
+          if (i in colsByColor) {
+            var red = cycleMap(i,GLOBAL_SHIFT,ITERATIONS)
+            var green = cycleMap(i,GLOBAL_SHIFT + 0.333333,ITERATIONS)
+            var blue = cycleMap (i,GLOBAL_SHIFT + 0.666666,ITERATIONS)
+            var color = makeColor(red, green, blue);
+            var cols = colsByColor[i];
+            var rows = rowsByColor[i];
+            var len = cols.length;
+            for (var j=0; j < len; j++) {
+              var c = cols[j];
+              var r = rows[j];
+              ctx.fillStyle = color;
+              ctx.fillRect(c*SCALE, r*SCALE, SCALE, SCALE);
             }
           }
         }
