@@ -9,6 +9,7 @@
       PIXELS = 600
       SCALE = 1
       TOO_FAR = 100
+      GLOBAL_SHIFT = .546
       //take a double between 0 and 1 and returns integer between 0 and 255
       var projection = function(d) {
         return  Math.round(255* d)
@@ -21,7 +22,7 @@
         return r
       }
       var cycleMap = function (x,shift,width) {
-        return (Math.sin((x + (shift)) * width/(Math.PI * 2)) + 1)/2
+        return Math.sin((x + shift * width) * Math.PI * 2/width)/2 + 0.5
       }
       //r,g,b are floats/doubles between 0 and 1
       var makeColor = function(r,g,b) {
@@ -29,6 +30,12 @@
       }
       var transform = function(x, pixels, minplot, maxplot) {
         return minplot + (x/pixels * (maxplot - minplot))
+      }
+      var xTransform = function(x, pixels, minplot, maxplot) {
+        return transform(x,pixels,minplot,maxplot);
+      }
+      var yTransform = function(y, pixels, minplot, maxplot) {
+        return -transform(y,pixels,-minplot,-maxplot);
       }
       var multComplex = function(a,b) {
         return [(a[0] * b[0] - a[1] * b[1]), (a[0] * b[1] + b[0] * a[1])]
@@ -48,16 +55,16 @@
         }
         for (c=0; c < PIXELS/SCALE; c++) {
           for (r=0; r < PIXELS/SCALE; r++) {
-            x = transform(c, PIXELS/SCALE, -2, 1)
-            y = -transform(r, PIXELS/SCALE, -1, 1)
+            x = xTransform(c, PIXELS/SCALE, -2, 1)
+            y = yTransform(r, PIXELS/SCALE, -1, 1)
             p = [x,y]
             z = p
             for (i = 0; i<100; i++) {
               z = addComplex(multComplex(z,z),p)
               if (distance(z,p) >= TOO_FAR) {
-                red = cycleMap(i,Math.PI/2,0,100)
-                green = cycleMap(i,Math.PI/2 + .3333333 * 2 * Math.PI ,100)
-                blue = cycleMap (i,Math.PI/2 - .3333333 * 2 * Math.PI ,100)
+                red = cycleMap(i,GLOBAL_SHIFT,100)
+                green = cycleMap(i,GLOBAL_SHIFT + 0.333333,100)
+                blue = cycleMap (i,GLOBAL_SHIFT + 0.666666,100)
                 pixel (c,r,makeColor(red,green,blue))
               }
             }
@@ -66,7 +73,7 @@
       }
     </script>
   </head>
-  <body>
+  <body onload="doit()">
     <canvas id="blah" width="600" height="600"></canvas>
   </body>
 </html>
